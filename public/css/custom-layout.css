@@ -1,0 +1,29 @@
+.layout-wrapper {
+    padding-right: 16.75rem;
+    padding-left: 0;
+    flex-direction: row-reverse;
+    display: flex;
+    border-right: 1px solid #e5e7eb;
+}
+
+.layout-menu {
+    right: 0;
+    left: auto;
+}
+
+@supports selector(:has(*)) {
+    @media (min-width: 1280px) {
+        body.theme-minimalistic .layout-wrapper:has(>.layout-menu) {
+            padding-right: 16.75rem;
+        }
+    }
+}
+
+@supports selector(:has(*)) {
+    @media (min-width: 1024px) {
+        body.theme-minimalistic .layout-wrapper-short:has(>.layout-menu) {
+            padding-right: 3.75rem !important;
+        }
+    }
+}
+
