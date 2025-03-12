@@ -61,7 +61,7 @@ class YandexPartnerService
      * @param string $date Дата в формате YYYY-MM-DD
      * @return float
      */
-    private function getRevenueForDate(string $domain, string $date): float
+    public function getRevenueForDate(string $domain, string $date): float
     {
         try {
             $response = $this->client->get("statistics2/get.json", [
