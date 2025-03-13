@@ -35,4 +35,14 @@ return [
         ],
     ],
 
+    // Для YandexMetrika
+    // 'yandex_metrika' => [
+    //     'token' => env('YANDEX_METRIKA_TOKEN'),
+    //     'counter_id' => env('YANDEX_METRIKA_COUNTER_ID'),
+    // ],
+
+    'yandex_partner' => [
+    'oauth_token' => env('YANDEX_PARTNER_OAUTH_TOKEN'),
+    ],
+
 ];
