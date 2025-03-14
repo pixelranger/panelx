@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use App\Models\Metrics;
 use Illuminate\Support\Facades\Http;
+use Iodev\Whois\Factory as Whois;
+
 
 class Site extends Model
 {
@@ -51,64 +53,69 @@ class Site extends Model
         return $this->hasOne(Metrics::class)->whereDate('created_at', today())->first();
     }
 
-    // 🔹 Автоматическое обновление URL админки при создании/обновлении
+    // Устанавливаем значение created_by автоматически
     public static function boot()
     {
         parent::boot();
 
         static::creating(function ($site) {
-            $site->url_admin = $site->fetchAdminUrl() ?? 'https://example.com/admin'; // Заменить на дефолтный URL
-            $site->domain_expiration_date = $site->fetchDomainExpiration();
-            $site->created_by = auth()->id() ?? 1;
+            $site->created_by = auth()->id() ?? 1;  // Если авторизованный пользователь отсутствует, ставим 1 (администратор по умолчанию)
         });
 
-        static::updating(function ($site) {
-            if (!$site->url_admin) {
-                $site->url_admin = $site->fetchAdminUrl();
-            }
-            if (!$site->domain_expiration_date) {
-                $site->domain_expiration_date = $site->fetchDomainExpiration();
-            }
+        static::created(function ($site) {
+            // Создание записи метрик для нового сайта
+            Metrics::create([
+                'site_id' => $site->id,
+                'unique_visitors' => 0,  // Установите начальное значение
+                'page_views' => 0,       // Установите начальное значение
+                'total_revenue' => 0.0,  // Установите начальное значение
+                'created_at' => now(),
+                'updated_at' => now(),
+                'date' => now()->toDateString(),
+            ]);
         });
     }
 
-    // 🔹 Метод для получения URL админки из Яндекс.Метрики
-    public function fetchAdminUrl(): ?string
+    // Метод для получения даты окончания регистрации домена
+    public function getDomainExpirationDate(string $domain): ?string
     {
         try {
-            $response = Http::get("https://api-metrika.yandex.net/stat/v1/data", [
-                'ids' => $this->counter_id, // ID счётчика метрики
-                'metrics' => 'ym:pv:adminUrl', // Подставить реальный параметр метрики
-                'oauth_token' => config('services.yandex_metrika.token'),
-            ]);
+            // Создание объекта WHOIS
+            $whois = Whois::get()->createWhois();
+            $info = $whois->loadDomainInfo($domain);
 
-            if ($response->successful()) {
-                return $response->json()['data'][0]['adminUrl'] ?? null;
+            // Проверка наличия данных и даты окончания регистрации
+            if ($info && $info->expirationDate) {
+                return date('Y-m-d', $info->expirationDate);
             }
         } catch (\Exception $e) {
-            \Log::error("Ошибка получения URL админки: " . $e->getMessage());
+            Log::error("Ошибка получения WHOIS для $domain: " . $e->getMessage());
         }
 
         return null;
     }
 
-    // 🔹 Метод для получения даты окончания регистрации домена из WHOIS
-    public function fetchDomainExpiration(): ?string
+    public function getYesterdayMetrics(): ?Metrics
     {
-        try {
-            $response = Http::get("https://whois-service.com/api", [
-                'domain' => parse_url($this->url, PHP_URL_HOST),
-                'apiKey' => config('services.whois.api_key'),
-            ]);
+        return $this->hasOne(Metrics::class)
+                    ->whereDate('date', today()->subDay())
+                    ->first();
+    }
 
-            if ($response->successful()) {
-                return $response->json()['expiration_date'] ?? null;
-            }
-        } catch (\Exception $e) {
-            \Log::error("Ошибка получения даты окончания регистрации домена: " . $e->getMessage());
+    public function getMetricDifference(string $metric): ?string
+    {
+        $todayValue = $this->metricsToday()?->$metric ?? 0;
+        $yesterdayValue = $this->getYesterdayMetrics()?->$metric ?? 0;
+
+        $diff = $todayValue - $yesterdayValue;
+
+        if ($diff > 0) {
+            return "<span style='color: green;'>+{$diff}</span>";
+        } elseif ($diff < 0) {
+            return "<span style='color: red;'>{$diff}</span>";
         }
 
-        return null;
+        return "<span style='color: gray;'>0</span>";
     }
+
 }
-

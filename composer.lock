@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a1de09994914e2f945030b53ef9cd67a",
+    "content-hash": "034b3d8bc2a598567b8b7b2a92daf963",
     "packages": [
         {
             "name": "brick/math",
@@ -2688,6 +2688,91 @@
             "time": "2024-12-30T11:07:19+00:00"
         },
         {
+            "name": "novutec/domainparser",
+            "version": "v2.0.11",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/3name/DomainParser.git",
+                "reference": "d33171d9c8e8ca754ec40dd87fbb75af47c58617"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/3name/DomainParser/zipball/d33171d9c8e8ca754ec40dd87fbb75af47c58617",
+                "reference": "d33171d9c8e8ca754ec40dd87fbb75af47c58617",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "ext-pcre": "*",
+                "php": ">=5.6.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Novutec\\DomainParser\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Novutec Inc."
+                }
+            ],
+            "description": "A domain name parser to parse and to validate a domain name.",
+            "homepage": "https://github.com/3name/DomainParser/",
+            "keywords": [
+                "domain",
+                "domainparser",
+                "php"
+            ],
+            "support": {
+                "source": "https://github.com/3name/DomainParser/tree/v2.0.11"
+            },
+            "time": "2021-08-13T22:36:26+00:00"
+        },
+        {
+            "name": "novutec/whoisparser",
+            "version": "v3.2.13",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/3name/WhoisParser.git",
+                "reference": "50981adfe18cb884e03ee3ae8dbb04888a65d17f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/3name/WhoisParser/zipball/50981adfe18cb884e03ee3ae8dbb04888a65d17f",
+                "reference": "50981adfe18cb884e03ee3ae8dbb04888a65d17f",
+                "shasum": ""
+            },
+            "require": {
+                "novutec/domainparser": ">=2.0.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Novutec\\WhoisParser\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "Apache-2.0"
+            ],
+            "description": "Lookup domain names, IP addresses and AS numbers by WHOIS.",
+            "homepage": "https://github.com/3name/WhoisParser/",
+            "keywords": [
+                "php",
+                "whois",
+                "whoisparser"
+            ],
+            "support": {
+                "source": "https://github.com/3name/WhoisParser/tree/v3.2.13"
+            },
+            "time": "2021-08-13T23:39:37+00:00"
+        },
+        {
             "name": "nunomaduro/termwind",
             "version": "v2.3.0",
             "source": {
@@ -2926,6 +3011,68 @@
                 }
             ],
             "time": "2024-07-20T21:41:07+00:00"
+        },
+        {
+            "name": "phpwhois/phpwhois",
+            "version": "v4.2.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpWhois/phpWhois.git",
+                "reference": "45f46482d8197ec18f5fff47d2b51d422af9c7a4"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpWhois/phpWhois/zipball/45f46482d8197ec18f5fff47d2b51d422af9c7a4",
+                "reference": "45f46482d8197ec18f5fff47d2b51d422af9c7a4",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "suggest": {
+                "lib-openssl": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "src/whois.main.php",
+                    "src/whois.utils.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0"
+            ],
+            "authors": [
+                {
+                    "name": "Mark Jeftovic",
+                    "email": "markjr@easydns.com"
+                },
+                {
+                    "name": "David Saez Padros",
+                    "email": "david@ols.es"
+                },
+                {
+                    "name": "Ross Golder",
+                    "email": "ross@golder.org"
+                },
+                {
+                    "name": "Dmitry Lukashin",
+                    "email": "dmitry@lukashin.ru"
+                }
+            ],
+            "description": "phpWhois - library for querying whois services and parsing results. Based on phpwhois.org",
+            "homepage": "http://phpwhois.pw",
+            "keywords": [
+                "php",
+                "phpwhois",
+                "whois"
+            ],
+            "support": {
+                "issues": "https://github.com/phpWhois/phpWhois/issues",
+                "source": "https://github.com/phpWhois/phpWhois/tree/v4.2.5"
+            },
+            "time": "2014-12-30T17:09:58+00:00"
         },
         {
             "name": "psr/clock",

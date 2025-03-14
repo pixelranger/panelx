@@ -14,8 +14,7 @@ use MoonShine\UI\Fields\Preview;
 use MoonShine\Contracts\UI\FieldContract;
 use MoonShine\Contracts\UI\ComponentContract;
 use MoonShine\UI\Components\Layout\Box;
-use Illuminate\Support\Facades\Http;
-use Iodev\Whois\Factory;
+use App\MoonShine\Fields\CustomPreview;
 
 /**
  * @extends ModelResource<Site>
@@ -82,56 +81,5 @@ class SiteResource extends ModelResource
             'income_forecast' => ['numeric', 'min:0'],
             'domain_expiration_date' => ['nullable', 'date'],
         ];
-    }
-
-    /**
-     * Получает URL админки из API Яндекс.Метрики.
-     */
-    protected function fetchAdminUrlFromMetrika(Site $site): ?string
-    {
-        $token = config('services.yandex.token');
-        $counterId = $site->counter_id;
-
-        $response = Http::withHeaders([
-            'Authorization' => "OAuth $token",
-        ])->get("https://api-metrika.yandex.net/stat/v1/data", [
-            'ids' => $counterId,
-            'metrics' => 'ym:pv:pageviews',
-            'dimensions' => 'ym:pv:URLPath',
-            'filters' => "ym:pv:URLPath=~'admin|dashboard|wp-admin|panel'",
-            'sort' => '-ym:pv:pageviews',
-            'limit' => 1,
-        ]);
-
-        if ($response->successful() && !empty($response['data'])) {
-            return $site->url . $response['data'][0]['dimensions'][0]['name'];
-        }
-
-        return null;
-    }
-
-    /**
-     * Получает дату окончания регистрации домена через WHOIS.
-     */
-    protected function fetchDomainExpirationDate(Site $site): ?string
-    {
-        $whois = Factory::get()->createWhois();
-        $info = $whois->loadDomainInfo(parse_url($site->url, PHP_URL_HOST));
-
-        return $info ? $info->expirationDate->format('Y-m-d') : null;
-    }
-
-    /**
-     * Перед сохранением получает URL админки и дату окончания регистрации домена.
-     */
-    protected function beforeSave(Site $site): void
-    {
-        if (!$site->url_admin) {
-            $site->url_admin = $this->fetchAdminUrlFromMetrika($site);
-        }
-
-        if (!$site->domain_expiration_date) {
-            $site->domain_expiration_date = $this->fetchDomainExpirationDate($site);
-        }
     }
 }

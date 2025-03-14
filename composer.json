@@ -10,7 +10,9 @@
         "io-developer/php-whois": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/tinker": "^2.10.1",
-        "moonshine/moonshine": "^3.7"
+        "moonshine/moonshine": "^3.7",
+        "novutec/whoisparser": "*",
+        "phpwhois/phpwhois": "*"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
