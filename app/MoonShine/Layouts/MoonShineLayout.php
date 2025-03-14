@@ -30,6 +30,9 @@ use MoonShine\UI\Components\{Breadcrumbs,
     Layout\TopBar,
     Layout\Wrapper,
     When};
+use App\MoonShine\Resources\SiteMetricResource;
+use App\MoonShine\Resources\SiteResource;
+use MoonShine\MenuManager\MenuItem;
 
 final class MoonShineLayout extends CompactLayout
 {
@@ -44,6 +47,9 @@ final class MoonShineLayout extends CompactLayout
     {
         return [
             ...parent::menu(),
+            MenuItem::make('Сайты', SiteResource::class),
+            // MenuItem::make('SiteMetrics', SiteResource::make(),
+            // MenuItem::make('SiteMetrics', SiteMetricResource::class),
         ];
     }
 
