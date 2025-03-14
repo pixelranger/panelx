@@ -2,18 +2,16 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\Http\Request;
 use App\Models\Site;
 use App\Models\SiteMetric;
-use Illuminate\Http\Request;
+use Carbon\Carbon;
 
 class SiteController extends Controller
 {
-
     public function index()
     {
-        $today = now()->toDateString(); // Текущая дата
-
-        // Получаем сайты с их метриками за сегодня
+        $today = Carbon::today()->toDateString();
         $sites = Site::with(['metrics' => function ($query) use ($today) {
             $query->where('date', $today);
         }])->get();

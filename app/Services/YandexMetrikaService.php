@@ -13,17 +13,17 @@ class YandexMetrikaService
     protected string $token;
     protected string $counterId;
 
-    public function __construct(string $token, string $counterId)
-    {
-        $this->token = $token;
-        $this->counterId = $counterId;
-    }
-
-    // public function __construct()
+    // public function __construct(string $token, string $counterId)
     // {
-    //     $this->token = config('services.yandex_metrika.token');
-    //     $this->counterId = config('services.yandex_metrika.counter_id');
+    //     $this->token = $token;
+    //     $this->counterId = $counterId;
     // }
+
+    public function __construct()
+    {
+        $this->token = config('services.yandex_metrika.token');
+        $this->counterId = config('services.yandex_metrika.counter_id');
+    }
 
     /**
      * Получает данные о посещаемости за заданный период
@@ -34,6 +34,7 @@ class YandexMetrikaService
      */
     public function getVisits(string $dateFrom, string $dateTo): ?array
     {
+        // Закомментирован код, чтобы избежать ошибки
         $response = Http::withHeaders([
             'Authorization' => 'OAuth ' . $this->token,
         ])->get($this->apiUrl, [
@@ -44,6 +45,10 @@ class YandexMetrikaService
             'accuracy' => 'full',
         ]);
 
+        // Заглушка возвращает пустой массив
+        // return [];
+
+        // Если вы хотите возвращать ошибку в логах, оставьте эту часть:
         if ($response->successful()) {
             return $response->json();
         }

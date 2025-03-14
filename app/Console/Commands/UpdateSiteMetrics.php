@@ -8,6 +8,7 @@ use App\Services\YandexPartnerService;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use Iodev\Whois\Factory;
 
 class UpdateSiteMetrics extends Command
 {
@@ -18,10 +19,12 @@ class UpdateSiteMetrics extends Command
     {
         $date = now()->toDateString();
         $sites = Site::all();
+        $whois = Factory::get()->createWhois();
 
         foreach ($sites as $site) {
             $metrics = $this->getMetricsFromYandex($site->domain);
             $revenue = $yandexService->getRevenueForDate($site->domain, $date);
+            $expirationDate = $this->getDomainExpirationDate($whois, $site->domain);
 
             SiteMetric::updateOrCreate(
                 ['site_id' => $site->id, 'date' => $date],
@@ -31,6 +34,9 @@ class UpdateSiteMetrics extends Command
                     'total_revenue' => $revenue ?? 0.00,
                 ]
             );
+
+            // Обновляем дату окончания регистрации домена
+            $site->update(['domain_expiration_date' => $expirationDate]);
 
             $this->info("Обновлены данные для {$site->domain} за {$date}");
         }
@@ -63,6 +69,20 @@ class UpdateSiteMetrics extends Command
             'unique_visitors' => $data['data'][0]['metrics'][0] ?? 0,
             'page_views' => $data['data'][0]['metrics'][1] ?? 0,
         ];
+        // return [
+        //     'unique_visitors' => 0,
+        //     'page_views' => 0,
+        // ];
+    }
+
+    private function getDomainExpirationDate($whois, string $domain): ?string
+    {
+        try {
+            $info = $whois->loadDomainInfo($domain);
+            return $info ? $info->expirationDate : null;
+        } catch (\Exception $e) {
+            Log::error("Ошибка получения WHOIS для {$domain}: " . $e->getMessage());
+            return null;
+        }
     }
 }
-

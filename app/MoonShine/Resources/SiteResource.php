@@ -4,53 +4,82 @@ declare(strict_types=1);
 
 namespace App\MoonShine\Resources;
 
-use MoonShine\Resources\Resource;
-use MoonShine\Fields\ID;
-use MoonShine\Fields\Text;
-use MoonShine\Fields\BelongsTo;
-use MoonShine\Fields\BelongsToMany;
-use MoonShine\Fields\Number;
-use MoonShine\Fields\Date;
-use MoonShine\Fields\Html;
 use App\Models\Site;
+use MoonShine\Laravel\Resources\ModelResource;
+use MoonShine\UI\Fields\ID;
+use MoonShine\UI\Fields\Number;
+use MoonShine\UI\Fields\Date;
+use MoonShine\UI\Fields\Text;
+use MoonShine\UI\Fields\Preview;
+use MoonShine\Contracts\UI\FieldContract;
+use MoonShine\Contracts\UI\ComponentContract;
+use MoonShine\UI\Components\Layout\Box;
+use App\MoonShine\Fields\CustomPreview;
 
-class SiteResource extends Resource
+/**
+ * @extends ModelResource<Site>
+ */
+class SiteResource extends ModelResource
 {
-    public static string $model = Site::class; // Указываем модель
-    public static string $title = 'Сайты';     // Название ресурса
+    protected string $model = Site::class;
+    protected string $title = 'Сайты';
 
     /**
-     * Метод для определения полей в форме
+     * @return list<FieldContract>
      */
-    public function fields(): array
+    protected function indexFields(): iterable
     {
         return [
-            ID::make()->sortable(), // Поле ID
-            Html::make('Фавиконка', function ($item) {
-                return "<img src='{$item->url}/favicon.png' width='32' height='32' />";
-            })->sortable(), // Фавиконка сайта
-            Text::make('Название', 'title')->required(), // Поле для названия
-            Text::make('URL', 'url')->required(), // Поле для URL
-            Text::make('URL админки', 'url_admin')->required(), // Поле для URL админки
-            Number::make('Прогноз дохода', 'income_forecast')->default(0), // Прогноз дохода
-            BelongsTo::make('Автор', 'createdBy', 'name')->default(auth()->id())->readonly(), // Автор
-            BelongsToMany::make('Категории', 'categories', 'title'), // Привязка к категориям
-            Date::make('Дата создания', 'created_at')->format('d.m.Y')->sortable(), // Дата создания
-            Date::make('Дата обновления', 'updated_at')->format('d.m.Y')->sortable(), // Дата обновления
+            ID::make()->sortable(),
+            Preview::make('Фавиконка', 'favicon'),
+            Text::make('Название', 'title')->sortable()->required(),
+            Text::make('URL', 'url')->sortable()->required(),
+            Preview::make('Уникальные посетители', 'unique_visitors'),
+            Preview::make('Просмотры страниц', 'page_views'),
+            Preview::make('Доход', 'total_revenue'),
+            Text::make('URL админки', 'url_admin')->nullable(),
+            Date::make('Дата окончания регистрации', 'domain_expiration_date')->format('d.m.Y')->sortable(),
         ];
     }
 
     /**
-     * Добавление страницы ресурса
-     * Необходимо для корректной работы ресурса в MoonShine
+     * @return list<ComponentContract|FieldContract>
      */
-    protected function pages(): array
+    protected function formFields(): iterable
     {
         return [
-            'index' => [
-                'title' => 'Сайты',
-                'component' => 'site-resource',
-            ],
+            Box::make([
+                ID::make(),
+                Text::make('Название', 'title')->required(),
+                Text::make('URL', 'url')->required(),
+                Text::make('URL админки', 'url_admin')->nullable(),
+                Number::make('Прогноз дохода', 'income_forecast')->default(0),
+                Date::make('Дата окончания регистрации', 'domain_expiration_date')->nullable(),
+            ]),
+        ];
+    }
+
+    /**
+     * @return list<FieldContract>
+     */
+    protected function detailFields(): iterable
+    {
+        return $this->indexFields();
+    }
+
+    /**
+     * @param Site $item
+     *
+     * @return array<string, string[]|string>
+     */
+    protected function rules(mixed $item): array
+    {
+        return [
+            'title' => ['required', 'string'],
+            'url' => ['required', 'url'],
+            'url_admin' => ['nullable', 'url'],
+            'income_forecast' => ['numeric', 'min:0'],
+            'domain_expiration_date' => ['nullable', 'date'],
         ];
     }
 }
