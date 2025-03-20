@@ -35,14 +35,21 @@ return [
         ],
     ],
 
-    // Для YandexMetrika
-    'yandex_metrika' => [
-        'token' => env('YANDEX_METRIKA_TOKEN'),
-        'counter_id' => env('YANDEX_METRIKA_COUNTER_ID'),
+    // Для таблицы Сайты
+    'yandex_partner' => [
+        'oauth_token' => env('YANDEX_PARTNER_TOKEN'),
+        'client_id' => env('YANDEX_PARTNER_CLIENT_ID'),
     ],
 
-    'yandex_partner' => [
-    'oauth_token' => env('YANDEX_PARTNER_OAUTH_TOKEN'),
+    // 'yandex_metrika' => [
+    //     'token' => env('YANDEX_METRIKA_OAUTH_TOKEN'),
+    //     'counter_id' => env('YANDEX_METRIKA_COUNTER_ID'),
+    // ],
+
+    'yandex_metrika' => [
+        'client_id' => env('YANDEX_METRIKA_CLIENT_ID'),
+        'client_secret' => env('YANDEX_METRIKA_CLIENT_SECRET'),
+        'redirect_uri' => env('YANDEX_METRIKA_REDIRECT_URI'),
     ],
 
 ];

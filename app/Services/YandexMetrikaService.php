@@ -1,63 +1,54 @@
 <?php
 
-declare(strict_types=1);
-
 namespace App\Services;
 
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use GuzzleHttp\Client;
 
 class YandexMetrikaService
 {
-    protected string $apiUrl = 'https://api-metrika.yandex.net/stat/v1/data';
-    protected string $token;
-    protected string $counterId;
-
-    // public function __construct(string $token, string $counterId)
-    // {
-    //     $this->token = $token;
-    //     $this->counterId = $counterId;
-    // }
+    private $clientId;
+    private $clientSecret;
+    private $redirectUri;
 
     public function __construct()
     {
-        $this->token = config('services.yandex_metrika.token');
-        $this->counterId = config('services.yandex_metrika.counter_id');
+        $this->clientId = config('services.yandex_metrika.client_id');
+        $this->clientSecret = config('services.yandex_metrika.client_secret');
+        $this->redirectUri = config('services.yandex_metrika.redirect_uri');
     }
 
-    /**
-     * Получает данные о посещаемости за заданный период
-     *
-     * @param string $dateFrom — Начальная дата (формат YYYY-MM-DD)
-     * @param string $dateTo — Конечная дата (формат YYYY-MM-DD)
-     * @return array|null
-     */
-    public function getVisits(string $dateFrom, string $dateTo): ?array
+    public function getAccessToken($code)
     {
-        // Закомментирован код, чтобы избежать ошибки
-        $response = Http::withHeaders([
-            'Authorization' => 'OAuth ' . $this->token,
-        ])->get($this->apiUrl, [
-            'ids' => $this->counterId,
-            'metrics' => 'ym:s:visits', // Метрика: визиты
-            'date1' => $dateFrom,
-            'date2' => $dateTo,
-            'accuracy' => 'full',
+        $client = new Client();
+        $response = $client->post('https://oauth.yandex.ru/token', [
+            'form_params' => [
+                'grant_type' => 'authorization_code',
+                'code' => $code,
+                'client_id' => $this->clientId,
+                'client_secret' => $this->clientSecret,
+            ],
         ]);
 
-        // Заглушка возвращает пустой массив
-        // return [];
+        return json_decode((string) $response->getBody(), true)['access_token'];
+    }
 
-        // Если вы хотите возвращать ошибку в логах, оставьте эту часть:
-        if ($response->successful()) {
-            return $response->json();
-        }
-
-        Log::error('Ошибка при запросе данных из Яндекс Метрики', [
-            'status' => $response->status(),
-            'body' => $response->body(),
+    public function getMetrics($accessToken, $counterId, $startDate, $endDate)
+    {
+        $client = new Client();
+        $response = $client->get('https://api-metrika.yandex.net/stat/v1/data', [
+            'headers' => [
+                'Authorization' => "OAuth " . $accessToken,
+            ],
+            'query' => [
+                'id' => $counterId,
+                'date1' => $startDate,
+                'date2' => $endDate,
+                'metrics' => 'ym:s:visits',
+                'dimensions' => 'ym:pv:date',
+                'limit' => 100,
+            ],
         ]);
 
-        return null;
+        return json_decode((string) $response->getBody(), true);
     }
 }
