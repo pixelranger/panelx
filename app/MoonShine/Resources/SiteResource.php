@@ -40,8 +40,13 @@ class SiteResource extends ModelResource
             Preview::make('Уникальные посетители', 'unique_visitors_with_difference'),
             Preview::make('Просмотры страниц', 'page_views_with_difference'),
             Preview::make('Доход', 'formatted_total_revenue_with_difference'),
+            Number::make('Прогноз дохода', 'income_forecast')->sortable(),
+            Number::make('ИКС', 'ix'),
+            Number::make('Индексация Яндекс', 'yandex_indexed'),
+            Number::make('Индексация Google', 'google_indexed'),
             Text::make('URL админки', 'url_admin')->nullable(),
             Date::make('Дата окончания регистрации', 'domain_expiration_date')->format('d.m.Y')->sortable(),
+            Preview::make('Дней до окончания', 'days_until_expiration'),
         ];
     }
 
