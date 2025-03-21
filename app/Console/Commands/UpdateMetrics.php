@@ -1,89 +1,74 @@
 <?php
 
-// namespace App\Console\Commands;
-
-// use Illuminate\Console\Command;
-// use App\Models\Site;
-// use App\Models\SiteMetric;
-
-// class UpdateMetrics extends Command
-// {
-//     protected $signature = 'metrics:update';
-//     protected $description = 'Обновление метрик сайтов из API Яндекса';
-
-//     public function handle()
-//     {
-//         foreach (Site::all() as $site) {
-//             $metrics = $this->fetchMetrics($site->url);
-
-//             SiteMetric::updateOrCreate(
-//                 ['site_id' => $site->id, 'date' => now()->format('Y-m-d')],
-//                 [
-//                     'unique_visitors' => $metrics['unique_visitors'],
-//                     'page_views' => $metrics['page_views'],
-//                     'total_revenue' => $metrics['total_revenue'],
-//                 ]
-//             );
-//         }
-
-//         $this->info('Метрики обновлены.');
-//     }
-
-//     private function fetchMetrics($url)
-//     {
-//         return [
-//             'unique_visitors' => rand(100, 500),
-//             'page_views' => rand(500, 2000),
-//             'total_revenue' => rand(50, 500) / 10,
-//         ];
-//     }
-// }
-
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Site;
-use Illuminate\Support\Facades\Http;
-use Iodev\Whois\Factory;
+use App\Models\Metrics;
+use Illuminate\Support\Facades\Log;
 
 class UpdateMetrics extends Command
 {
     protected $signature = 'metrics:update';
-    protected $description = 'Обновляет метрики сайтов и дату окончания регистрации домена';
+    protected $description = 'Обновляет метрики сайтов из Яндекс.Метрики и Яндекс.Партнёрки';
 
-    public function handle(): void
+    public function handle()
     {
-        $whois = Factory::get()->createWhois();
+        $this->info('Начало обновления метрик...');
+        Log::info('Начало обновления метрик...');
 
-        Site::all()->each(function ($site) use ($whois) {
-            // Обновление метрик
-            $token = config('services.yandex.token');
-            $counterId = $site->counter_id;
+        // Получаем все сайты
+        $sites = Site::all();
 
-            $response = Http::withHeaders([
-                'Authorization' => "OAuth $token",
-            ])->get("https://api-metrika.yandex.net/stat/v1/data", [
-                'ids' => $counterId,
-                'metrics' => 'ym:pv:pageviews,ym:pv:users',
-                'date1' => 'today',
-                'date2' => 'today',
-            ]);
+        // Проходим по каждому сайту
+        foreach ($sites as $site) {
+            // Логируем запрос к Яндекс.Метрике и Яндекс.Партнёрке
+            $this->info("Запрос к Яндекс.Метрике и Яндекс.Партнёрке для сайта: {$site->title}");
+            Log::info("Запрос к Яндекс.Метрике и Яндекс.Партнёрке для сайта: {$site->title}");
 
-            if ($response->successful()) {
-                $data = $response->json()['data'] ?? [];
-                $site->unique_visitors = $data[0]['metrics'][1] ?? 0;
-                $site->page_views = $data[0]['metrics'][0] ?? 0;
+            try {
+                // Получаем метрики из Яндекс.Метрики
+                $metrikaMetrics = $site->getMetricsFromYandexMetrika();
+
+                // Получаем доход из Яндекс.Партнёрки
+                $revenue = $site->getRevenueFromYandexPartner();
+
+                // Обновляем или создаем запись метрик за сегодня
+                $metrics = Metrics::updateOrCreate(
+                    ['site_id' => $site->id, 'date' => today()->toDateString()],
+                    [
+                        'total_revenue' => $revenue,
+                        'unique_visitors' => $metrikaMetrics['unique_visitors'],
+                        'page_views' => $metrikaMetrics['page_views'],
+                    ]
+                );
+
+                // Проверяем, есть ли данные за вчерашний день
+                $yesterdayMetrics = Metrics::where('site_id', $site->id)
+                    ->whereDate('date', today()->subDay())
+                    ->first();
+
+                if (!$yesterdayMetrics) {
+                    // Если данных за вчера нет, создаем запись с нулевыми значениями
+                    Metrics::create([
+                        'site_id' => $site->id,
+                        'date' => today()->subDay(),
+                        'total_revenue' => 0,
+                        'unique_visitors' => 0,
+                        'page_views' => 0,
+                    ]);
+                }
+
+                $this->info("Метрики обновлены для сайта: {$site->title}");
+                Log::info("Метрики обновлены для сайта: {$site->title}");
+
+            } catch (\Exception $e) {
+                Log::error("Ошибка при получении метрик для сайта {$site->title}: {$e->getMessage()}");
+                $this->error("Ошибка при получении метрик для сайта {$site->title}: {$e->getMessage()}");
             }
+        }
 
-            // Обновление даты окончания регистрации
-            $info = $whois->loadDomainInfo(parse_url($site->url, PHP_URL_HOST));
-            if ($info) {
-                $site->domain_expiration_date = $info->expirationDate->format('Y-m-d');
-            }
-
-            $site->save();
-        });
-
-        $this->info('Метрики и даты окончания регистрации доменов обновлены.');
+        $this->info('Обновление метрик завершено.');
+        Log::info('Обновление метрик завершено.');
     }
 }
