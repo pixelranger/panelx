@@ -253,4 +253,35 @@ class Site extends Model
         return $this->hasOne(Metrics::class)->whereDate('created_at', today()->subDay())->first();
     }
 
+    // Аксессор для подсчёта дней до окончания регистрации
+    public function getDaysUntilExpirationAttribute(): string
+{
+    // Если дата окончания регистрации не установлена, возвращаем "Нет данных"
+    if (!$this->domain_expiration_date) {
+        return 'Нет данных';
+    }
+
+    // Получаем текущую дату и дату окончания регистрации
+    $today = now();
+    $expirationDate = \Carbon\Carbon::parse($this->domain_expiration_date);
+
+    // Вычисляем разницу в днях и приводим к целому числу
+    $daysDifference = (int)$today->diffInDays($expirationDate, false);
+
+    // Определяем цвет в зависимости от количества дней
+    if ($daysDifference < 0) {
+        // Если срок истёк (дни в минусе)
+        $color = 'red';
+    } elseif ($daysDifference <= 30) {
+        // Если осталось 30 дней или меньше
+        $color = 'orange';
+    } else {
+        // Если срок ещё не истёк
+        $color = 'green';
+    }
+
+    // Возвращаем результат с цветом
+    return "<span style='color: {$color};'>{$daysDifference}</span>";
+}
+
 }

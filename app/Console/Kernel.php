@@ -13,10 +13,10 @@ class Kernel extends ConsoleKernel
         $this->load(__DIR__.'/Commands');
     }
 
-    protected function schedule(Schedule $schedule)
-    {
-        $schedule->command('metrics:update')->daily();
-    }
+    // protected function schedule(Schedule $schedule)
+    // {
+    //     $schedule->command('metrics:update')->daily();
+    // }
 
 
 }
