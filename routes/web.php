@@ -17,6 +17,6 @@ Route::get('/', function () {
 // Route::get('/sites', [SiteController::class, 'index']);
 Route::get('/sites', [SiteController::class, 'index'])->name('sites.index');
 
-Route::get('/login-yandex', [YandexMetricController::class, 'redirectToProvider']);
-Route::get('/callback', [YandexMetricController::class, 'handleProviderCallback']);
-Route::get('/metrics', [YandexMetricController::class, 'getMetrics']);
+Route::get('/login-yandex', [YandexMetricController::class, 'redirectToProvider'])->middleware(['moonshine', \MoonShine\Laravel\Http\Middleware\Authenticate::class]);
+Route::get('/callback', [YandexMetricController::class, 'handleProviderCallback'])->middleware(['moonshine', \MoonShine\Laravel\Http\Middleware\Authenticate::class]);
+// Route::middleware('moonshine.auth')->get('/metrics', [YandexMetricController::class, 'getMetrics']);

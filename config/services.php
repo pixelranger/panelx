@@ -43,13 +43,13 @@ return [
 
     // 'yandex_metrika' => [
     //     'token' => env('YANDEX_METRIKA_OAUTH_TOKEN'),
-    //     'counter_id' => env('YANDEX_METRIKA_COUNTER_ID'),
     // ],
 
     'yandex_metrika' => [
         'client_id' => env('YANDEX_METRIKA_CLIENT_ID'),
         'client_secret' => env('YANDEX_METRIKA_CLIENT_SECRET'),
         'redirect_uri' => env('YANDEX_METRIKA_REDIRECT_URI'),
+        'counter_id' => env('YANDEX_METRIKA_COUNTER_ID'),
     ],
 
 ];

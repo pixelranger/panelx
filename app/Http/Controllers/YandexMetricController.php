@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\OauthTokens;
 use App\Services\YandexMetrikaService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class YandexMetricController extends Controller
 {
@@ -16,23 +18,29 @@ class YandexMetricController extends Controller
 
     public function redirectToProvider()
     {
-        $url = "https://oauth.yandex.ru/authorize?response_type=code&client_id=" . config('services.yandex_metrika.client_id') . "&redirect_uri=" . config('services.yandex_metrika.redirect_uri');
+        $url = "https://oauth.yandex.ru/authorize?response_type=code&force_confirm=yes&client_id=" . config('services.yandex_metrika.client_id') . "&redirect_uri=" . config('services.yandex_metrika.redirect_uri');
         return redirect($url);
     }
 
     public function handleProviderCallback(Request $request)
     {
         $code = $request->input('code');
-        $accessToken = $this->yandexMetrikaService->getAccessToken($code);
+        $response = $this->yandexMetrikaService->getAccessToken($code);
 
-        // Сохраните токен в сессии или базе данных
-        session(['yandex_access_token' => $accessToken]);
-
-        return redirect('/metrics');
+        OauthTokens::updateOrCreate(
+            ['moonshine_user_id' => auth('moonshine')->id()],
+            [
+                'access_token'  => $response['access_token'],
+                'refresh_token' => $response['refresh_token'],
+                'expires_at'    => $response['expires_in'],
+            ]
+        );
+        return redirect('/admin');
     }
 
     public function getMetrics()
     {
+        
         $accessToken = session('yandex_access_token');
         if (!$accessToken) {
             return redirect('/login-yandex');
