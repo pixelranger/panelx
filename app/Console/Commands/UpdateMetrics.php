@@ -5,15 +5,17 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\Site;
 use App\Models\Metrics;
+use App\Models\OauthTokens;
 use Illuminate\Support\Facades\Log;
 
 class UpdateMetrics extends Command
 {
-    protected $signature = 'metrics:update';
+    protected $signature = 'metrics:update {userid=1}';
     protected $description = 'Обновляет метрики сайтов из Яндекс.Метрики и Яндекс.Партнёрки';
 
     public function handle()
     {
+        $oauth = OauthTokens::find((int) $this->argument('userid'));
         $this->info('Начало обновления метрик...');
         Log::info('Начало обновления метрик...');
 
@@ -28,7 +30,7 @@ class UpdateMetrics extends Command
 
             try {
                 // Получаем метрики из Яндекс.Метрики
-                $metrikaMetrics = $site->getMetricsFromYandexMetrika();
+                $metrikaMetrics = $site->getMetricsFromYandexMetrika($oauth->access_token);
 
                 // Получаем доход из Яндекс.Партнёрки
                 $revenue = $site->getRevenueFromYandexPartner();

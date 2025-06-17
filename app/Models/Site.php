@@ -160,9 +160,8 @@ class Site extends Model
         }
     }
 
-    public function getMetricsFromYandexMetrika(): array
+    public function getMetricsFromYandexMetrika($token): array
     {
-        $token = config('services.yandex_metrika.token');
         $counterId = config('services.yandex_metrika.counter_id');
 
         try {

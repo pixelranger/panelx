@@ -29,7 +29,7 @@ class YandexMetrikaService
             ],
         ]);
 
-        return json_decode((string) $response->getBody(), true)['access_token'];
+        return json_decode((string) $response->getBody(), true);
     }
 
     public function getMetrics($accessToken, $counterId, $startDate, $endDate)
