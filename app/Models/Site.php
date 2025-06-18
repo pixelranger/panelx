@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Log;
 use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 use App\Services\YandexMetrikaService;
+use Illuminate\Support\Facades\Auth;
 
 class Site extends Model
 {
@@ -62,7 +63,7 @@ class Site extends Model
         parent::boot();
 
         static::creating(function ($site) {
-            $site->created_by = auth()->id() ?? 1;  // Если авторизованный пользователь отсутствует, ставим 1 (администратор по умолчанию)
+            $site->created_by = Auth::user()->id ?? 1;  // Если авторизованный пользователь отсутствует, ставим 1 (администратор по умолчанию)
         });
 
         static::created(function ($site) {
@@ -79,27 +80,31 @@ class Site extends Model
         });
     }
 
-    // Метод для обновления метрик сайта
-    public function updateMetrics()
-    {
-        // Получаем доход из Яндекс.Партнёрки
-        $revenue = $this->getRevenueFromYandexPartner();
+    /**
+     * DEPRECATED.
+     * TODO: NEED DELETED
+     * Метод для обновления метрик сайта
+     */
+    // public function updateMetrics()
+    // {
+    //     // Получаем доход из Яндекс.Партнёрки
+    //     $revenue = $this->getRevenueFromYandexPartner();
 
-        // Получаем метрики из Яндекс.Метрики
-        $metrikaMetrics = $this->getMetricsFromYandexMetrika();
+    //     // Получаем метрики из Яндекс.Метрики
+    //     $metrikaMetrics = $this->getMetricsFromYandexMetrika();
 
-        // Обновляем или создаем запись метрик
-        $metrics = Metrics::updateOrCreate(
-            ['site_id' => $this->id, 'date' => today()->toDateString()],
-            [
-                'total_revenue' => $revenue,
-                'unique_visitors' => $metrikaMetrics['unique_visitors'],
-                'page_views' => $metrikaMetrics['page_views'],
-            ]
-        );
+    //     // Обновляем или создаем запись метрик
+    //     $metrics = Metrics::updateOrCreate(
+    //         ['site_id' => $this->id, 'date' => today()->toDateString()],
+    //         [
+    //             'total_revenue' => $revenue,
+    //             'unique_visitors' => $metrikaMetrics['unique_visitors'],
+    //             'page_views' => $metrikaMetrics['page_views'],
+    //         ]
+    //     );
 
-        return $metrics;
-    }
+    //     return $metrics;
+    // }
 
 
 
@@ -162,13 +167,11 @@ class Site extends Model
 
     public function getMetricsFromYandexMetrika($token): array
     {
-        $counterId = config('services.yandex_metrika.counter_id');
-
         try {
             $response = Http::withHeaders([
                 'Authorization' => "OAuth {$token}",
             ])->get('https://api-metrika.yandex.net/stat/v1/data', [
-                'ids' => $counterId,
+                'ids' => $this->counter_id,
                 'metrics' => 'ym:s:visits,ym:s:pageviews', // Уникальные посетители и просмотры страниц
                 'date1' => today()->toDateString(), // Данные за сегодня
                 'date2' => today()->toDateString(),

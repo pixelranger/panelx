@@ -15,13 +15,12 @@ class UpdateMetrics extends Command
 
     public function handle()
     {
-        $oauth = OauthTokens::find((int) $this->argument('userid'));
+        $oauth = OauthTokens::where('moonshine_user_id', (int) $this->argument('userid'))->first();
         $this->info('Начало обновления метрик...');
         Log::info('Начало обновления метрик...');
 
         // Получаем все сайты
         $sites = Site::all();
-
         // Проходим по каждому сайту
         foreach ($sites as $site) {
             // Логируем запрос к Яндекс.Метрике и Яндекс.Партнёрке
@@ -63,7 +62,6 @@ class UpdateMetrics extends Command
 
                 $this->info("Метрики обновлены для сайта: {$site->title}");
                 Log::info("Метрики обновлены для сайта: {$site->title}");
-
             } catch (\Exception $e) {
                 Log::error("Ошибка при получении метрик для сайта {$site->title}: {$e->getMessage()}");
                 $this->error("Ошибка при получении метрик для сайта {$site->title}: {$e->getMessage()}");

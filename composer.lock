@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f9c01ab2926cc753c8575197aa813337",
+    "content-hash": "1d0bf8d506ded90d25fe78db9097d7ec",
     "packages": [
         {
             "name": "algo26-matthias/idna-convert",
@@ -1285,16 +1285,16 @@
         },
         {
             "name": "laravel/framework",
-            "version": "v12.19.0",
+            "version": "v12.19.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laravel/framework.git",
-                "reference": "dc96bb635385a7f139afe39b339a36e87ec72770"
+                "reference": "97c581cb23bdc3147aab0d5087b19167d329991e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laravel/framework/zipball/dc96bb635385a7f139afe39b339a36e87ec72770",
-                "reference": "dc96bb635385a7f139afe39b339a36e87ec72770",
+                "url": "https://api.github.com/repos/laravel/framework/zipball/97c581cb23bdc3147aab0d5087b19167d329991e",
+                "reference": "97c581cb23bdc3147aab0d5087b19167d329991e",
                 "shasum": ""
             },
             "require": {
@@ -1496,7 +1496,7 @@
                 "issues": "https://github.com/laravel/framework/issues",
                 "source": "https://github.com/laravel/framework"
             },
-            "time": "2025-06-17T17:02:22+00:00"
+            "time": "2025-06-17T23:44:27+00:00"
         },
         {
             "name": "laravel/prompts",
@@ -2062,6 +2062,71 @@
             "time": "2024-09-21T08:32:55+00:00"
         },
         {
+            "name": "league/oauth2-client",
+            "version": "2.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/thephpleague/oauth2-client.git",
+                "reference": "9df2924ca644736c835fc60466a3a60390d334f9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/thephpleague/oauth2-client/zipball/9df2924ca644736c835fc60466a3a60390d334f9",
+                "reference": "9df2924ca644736c835fc60466a3a60390d334f9",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.5.8 || ^7.4.5",
+                "php": "^7.1 || >=8.0.0 <8.5.0"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.3.5",
+                "php-parallel-lint/php-parallel-lint": "^1.4",
+                "phpunit/phpunit": "^7 || ^8 || ^9 || ^10 || ^11",
+                "squizlabs/php_codesniffer": "^3.11"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "League\\OAuth2\\Client\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Alex Bilbie",
+                    "email": "hello@alexbilbie.com",
+                    "homepage": "http://www.alexbilbie.com",
+                    "role": "Developer"
+                },
+                {
+                    "name": "Woody Gilk",
+                    "homepage": "https://github.com/shadowhand",
+                    "role": "Contributor"
+                }
+            ],
+            "description": "OAuth 2.0 Client Library",
+            "keywords": [
+                "Authentication",
+                "SSO",
+                "authorization",
+                "identity",
+                "idp",
+                "oauth",
+                "oauth2",
+                "single sign on"
+            ],
+            "support": {
+                "issues": "https://github.com/thephpleague/oauth2-client/issues",
+                "source": "https://github.com/thephpleague/oauth2-client/tree/2.8.1"
+            },
+            "time": "2025-02-26T04:37:30+00:00"
+        },
+        {
             "name": "league/uri",
             "version": "7.5.1",
             "source": {
@@ -2437,16 +2502,16 @@
         },
         {
             "name": "moonshine/moonshine",
-            "version": "3.14.1",
+            "version": "3.14.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/moonshine-software/moonshine.git",
-                "reference": "b26e4666e162684ba817efb770a4d15da2ee4eee"
+                "reference": "93a96b7379c6b494204a085e3082fb5a9afd7e5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/moonshine-software/moonshine/zipball/b26e4666e162684ba817efb770a4d15da2ee4eee",
-                "reference": "b26e4666e162684ba817efb770a4d15da2ee4eee",
+                "url": "https://api.github.com/repos/moonshine-software/moonshine/zipball/93a96b7379c6b494204a085e3082fb5a9afd7e5b",
+                "reference": "93a96b7379c6b494204a085e3082fb5a9afd7e5b",
                 "shasum": ""
             },
             "require": {
@@ -2475,7 +2540,7 @@
             },
             "require-dev": {
                 "friendsofphp/php-cs-fixer": "^3.68",
-                "larastan/larastan": "3.4.0",
+                "larastan/larastan": "^3.0",
                 "moonshine/import-export": "^1.0",
                 "orchestra/testbench": "^9.9",
                 "pestphp/pest": "^3",
@@ -2542,7 +2607,7 @@
                     "type": "open_collective"
                 }
             ],
-            "time": "2025-06-17T15:34:14+00:00"
+            "time": "2025-06-08T14:42:55+00:00"
         },
         {
             "name": "nesbot/carbon",
@@ -7216,16 +7281,16 @@
         },
         {
             "name": "phpunit/php-code-coverage",
-            "version": "11.0.9",
+            "version": "11.0.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/php-code-coverage.git",
-                "reference": "14d63fbcca18457e49c6f8bebaa91a87e8e188d7"
+                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/14d63fbcca18457e49c6f8bebaa91a87e8e188d7",
-                "reference": "14d63fbcca18457e49c6f8bebaa91a87e8e188d7",
+                "url": "https://api.github.com/repos/sebastianbergmann/php-code-coverage/zipball/1a800a7446add2d79cc6b3c01c45381810367d76",
+                "reference": "1a800a7446add2d79cc6b3c01c45381810367d76",
                 "shasum": ""
             },
             "require": {
@@ -7282,15 +7347,27 @@
             "support": {
                 "issues": "https://github.com/sebastianbergmann/php-code-coverage/issues",
                 "security": "https://github.com/sebastianbergmann/php-code-coverage/security/policy",
-                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/11.0.9"
+                "source": "https://github.com/sebastianbergmann/php-code-coverage/tree/show"
             },
             "funding": [
                 {
                     "url": "https://github.com/sebastianbergmann",
                     "type": "github"
+                },
+                {
+                    "url": "https://liberapay.com/sebastianbergmann",
+                    "type": "liberapay"
+                },
+                {
+                    "url": "https://thanks.dev/u/gh/sebastianbergmann",
+                    "type": "thanks_dev"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/phpunit/php-code-coverage",
+                    "type": "tidelift"
                 }
             ],
-            "time": "2025-02-25T13:26:39+00:00"
+            "time": "2025-06-18T08:56:18+00:00"
         },
         {
             "name": "phpunit/php-file-iterator",
@@ -8761,12 +8838,12 @@
     ],
     "aliases": [],
     "minimum-stability": "dev",
-    "stability-flags": [],
+    "stability-flags": {},
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {
         "php": "^8.2"
     },
-    "platform-dev": [],
+    "platform-dev": {},
     "plugin-api-version": "2.6.0"
 }
