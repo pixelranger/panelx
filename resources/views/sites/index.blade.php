@@ -24,7 +24,7 @@
                     $changeRevenue = $metric ? $metric->total_revenue - $metric->prev_total_revenue : 0;
                 @endphp
                 <tr>
-                    <td>{{ $site->domain }}</td>
+                    <td>{{ $site->title }}</td>
                     <td>
                         {{ $metric->unique_visitors ?? 0 }}
                         <span style="color: {{ $changeVisitors >= 0 ? 'green' : 'red' }};">
